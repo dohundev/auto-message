@@ -1,65 +1,153 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { ko } from 'date-fns/locale';
+import toast, { Toaster } from 'react-hot-toast';
+import { MESSAGE_TEMPLATE } from './constants/messageTemplate';
+
+const inputStyle =
+  'w-full rounded-xl bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400';
+const labelStyle = 'block text-sm font-semibold text-gray-800 mb-2';
 
 export default function Home() {
+  const [customerName, setCustomerName] = useState('');
+  const [weddingDate, setWeddingDate] = useState<Date | null>(null);
+  const [shootTime, setShootTime] = useState('10:00');
+  const [ceremonyTime, setCeremonyTime] = useState('11:00');
+  const [location, setLocation] = useState('');
+
+  const formatDateWithDay = (data: Date) => {
+    const days = ['일', '월', '화', '수', '목', '금', '토']
+    const year = data.getFullYear()     
+    const month = data.getMonth() + 1   
+    const day = data.getDate()         
+    return `${year}. ${month}. ${day} (${days[data.getDay()]})`
+  }
+
+  const message = MESSAGE_TEMPLATE
+  .replace('{{weddingDateTime}}', weddingDate ? `${formatDateWithDay(weddingDate)} ${ceremonyTime || ''}` : '')
+  .replace('{{shootTime}}', shootTime || '')
+  .replace('{{location}}', location || '')
+  .replace('{{customerName}}', customerName || '');
+
+// 유효성 검사
+const checkValidation = () => {
+  if( !customerName || !weddingDate || !ceremonyTime || !shootTime || !location ) {
+    toast.error('모든 필수 항목을 입력해주세요.')
+    return false
+  }
+  return true
+}
+
+// 복사하기
+const copyMessage = () => {
+  if( !checkValidation() ) {
+    return 
+  }
+  navigator.clipboard.writeText(message)
+  toast.success('복사가 완료되었습니다.')
+}
+
+const addMinutesToTime = (baseTime: string, minutesToAdd: number) => {
+  if (!baseTime) return '';  
+  
+  const [hours, minutes] = baseTime.split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes + minutesToAdd;
+  
+  const newHours = Math.floor(totalMinutes / 60) % 24;  
+  const newMinutes = totalMinutes % 60;
+  return `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
+};
+
+
+const setTimeAfter = (time:number) => {
+  if(!shootTime){
+    toast.error('먼저 촬영 시작 시간을 입력해주세요.')
+    return
+  }
+
+  const newTime = addMinutesToTime(shootTime, time)
+  setCeremonyTime(newTime)
+}
+ 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+   
+    <main className='min-h-screen bg-gray-100 flex justify-center items-center gap-10'>
+    <Toaster   toastOptions={{
+      duration: 2000,
+      position: 'top-right',
+    }} />
+      <section className='w-full max-w-md h-[600px] bg-white rounded-2xl shadow-lg p-6'>
+        <h1 className='text-2xl font-bold text-gray-900'>문자 생성기 </h1>
+        <p className='text-sm text-gray-500 mb-3'>
+          입력만 하면 바로 복사해서 전송하세요
+        </p>
+        <div className='space-y-2 mb-4'>
+        <label className={labelStyle}>
+        이름
+          </label>
+          <input
+            className={inputStyle}
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            placeholder='고객명을 입력해주세요'
+          />
+          <label className={labelStyle}>
+            날짜
+          </label>
+          <DatePicker
+            selected={weddingDate}
+            onChange={(date: Date | null) => setWeddingDate(date)}
+            dateFormat='yyyy.MM.dd'
+            placeholderText='날짜 선택'
+            className={inputStyle}
+            locale={ko}  // 한글 로케일 추가!
+
+          />
+          <label className={labelStyle}>촬영 시작</label> 
+          <input
+            type='time'
+            className={inputStyle}
+            value={shootTime}
+            onChange={(e) => setShootTime(e.target.value)}
+          />
+
+          <label className={labelStyle}>본식 시간</label>
+          <button className='bg-rose-500 text-xs  text-white font-semibold py-2 rounded-xl active:scale-[0.98] transition cursor-pointer p-2 mr-2'
+          onClick={() => setTimeAfter(60)}
+          >1시간 뒤</button> 
+          <button className='bg-rose-500 text-xs  text-white font-semibold py-2 rounded-xl active:scale-[0.98] transition cursor-pointer p-2'
+          onClick={() => setTimeAfter(90)}
+          >1시간 30분 뒤</button> 
+          <input
+            type='time'
+            className={inputStyle}
+            value={ceremonyTime}
+            onChange={(e) => setCeremonyTime(e.target.value)}
+          />
+          
+        
+          <label className={labelStyle}>예식 장소</label>
+          <input
+            className={inputStyle}
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder='장소를 입력해주세요'
+          />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+      <section className='w-full max-w-md h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-4'>
+        <h1 className='text-2xl font-bold text-gray-900'>문자 미리보기 </h1>
+        <div className='bg-gray-100 rounded-xl p-4 text-sm text-gray-700 whitespace-pre-line leading-relaxed flex-1 overflow-y-auto my-2'>{message}</div>
+        <button
+          onClick={() => copyMessage()}
+          className='w-full bg-rose-500 text-white font-semibold py-4 rounded-xl active:scale-[0.98] transitio cursor-pointer'
+        >
+          문자 복사하기
+        </button> 
+      </section>
+    </main>
   );
 }
