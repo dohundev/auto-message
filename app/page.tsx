@@ -74,12 +74,12 @@ const setTimeAfter = (time:number) => {
  
   return (
    
-    <main className='min-h-screen bg-gray-100 flex justify-center items-center gap-10'>
+    <main className='min-h-screen bg-gray-100 flex flex-col lg:flex-row justify-center items-center gap-10'>
     <Toaster   toastOptions={{
-      duration: 2000,
-      position: 'top-right',
+      duration: 1500,
+      position: 'top-center',
     }} />
-      <section className='w-full max-w-md h-[600px] bg-white rounded-2xl shadow-lg p-6'>
+      <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl shadow-lg p-6'>
         <h1 className='text-2xl font-bold text-gray-900'>문자 생성기 </h1>
         <p className='text-sm text-gray-500 mb-3'>
           입력만 하면 바로 복사해서 전송하세요
@@ -138,7 +138,7 @@ const setTimeAfter = (time:number) => {
           />
         </div>
       </section>
-      <section className='w-full max-w-md h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-4'>
+      <section className='w-full max-w-md h-[400px] lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-4'>
         <h1 className='text-2xl font-bold text-gray-900'>문자 미리보기 </h1>
         <div className='bg-gray-100 rounded-xl p-4 text-sm text-gray-700 whitespace-pre-line leading-relaxed flex-1 overflow-y-auto my-2'>{message}</div>
         <button
