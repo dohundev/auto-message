@@ -105,6 +105,7 @@ const setTimeAfter = (time:number) => {
             className={inputStyle}
             locale={ko}   
             popperPlacement="bottom-start"   
+            withPortal
           />
           <label className={labelStyle}>촬영 시작</label> 
           <input
