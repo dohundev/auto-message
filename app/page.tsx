@@ -103,8 +103,8 @@ const setTimeAfter = (time:number) => {
             dateFormat='yyyy.MM.dd'
             placeholderText='날짜 선택'
             className={inputStyle}
-            locale={ko}  // 한글 로케일 추가!
-
+            locale={ko}   
+            popperPlacement="bottom-start"   
           />
           <label className={labelStyle}>촬영 시작</label> 
           <input
