@@ -57,6 +57,4 @@ body {
     margin: 0.5rem !important;
   }
 }
-input[type="time"]::-webkit-calendar-picker-indicator {
-  opacity: 0;           /* 보이지 않게 */
-}
+ 

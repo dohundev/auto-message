@@ -7,8 +7,9 @@ import { ko } from 'date-fns/locale';
 import toast, { Toaster } from 'react-hot-toast';
 import { MESSAGE_TEMPLATE } from './constants/messageTemplate';
 
+
 const inputStyle =
-  'w-full rounded-xl bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400';
+  'w-full  rounded-xl bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400';
 const labelStyle = 'block text-sm font-semibold text-gray-800 mb-2';
 
 export default function Home() {
@@ -108,27 +109,61 @@ const setTimeAfter = (time:number) => {
             withPortal
           />
           <label className={labelStyle}>촬영 시작</label> 
-          <input
+          {/* <input
             type='time'
             className={inputStyle}
             value={shootTime}
             onChange={(e) => setShootTime(e.target.value)}
-          />
-
+          /> */}
+          <DatePicker
+            selected={shootTime ? new Date(`2000-01-01T${shootTime}`) : null}
+            onChange={(date: Date | null) => {
+              if (date) {
+                const hours = String(date.getHours()).padStart(2, '0');
+                const mins = String(date.getMinutes()).padStart(2, '0');
+                setShootTime(`${hours}:${mins}`);
+              } 
+            }}
+            showTimeSelect          // 시간 선택 활성화
+            showTimeSelectOnly      // 시간만! (날짜 숨김)
+            timeIntervals={5}      // 30분 간격 (15, 30, 60 등)
+            timeCaption="시간"       // 헤더 텍스트
+            dateFormat="HH:mm"      // 표시 형식
+            locale={ko}
+            className={inputStyle}
+            wrapperClassName="w-full block"  // 추가!
+            placeholderText="시간 선택"
+          /> 
           <label className={labelStyle}>본식 시간</label>
-          <button className='bg-rose-500 text-xs  text-white font-semibold py-2 rounded-xl active:scale-[0.98] transition cursor-pointer p-2 mr-2'
+         <div>
+         <button className='bg-rose-500 text-xs  text-white font-semibold py-2 rounded-xl active:scale-[0.98] transition cursor-pointer p-2 mr-2'
           onClick={() => setTimeAfter(60)}
           >1시간 뒤</button> 
           <button className='bg-rose-500 text-xs  text-white font-semibold py-2 rounded-xl active:scale-[0.98] transition cursor-pointer p-2'
           onClick={() => setTimeAfter(90)}
           >1시간 30분 뒤</button> 
-          <input
-            type='time'
+         </div>
+
+          <DatePicker
+            selected={ceremonyTime ? new Date(`2000-01-01T${ceremonyTime}`) : null}
+            onChange={(date: Date | null) => {
+              if (date) {
+                const hours = String(date.getHours()).padStart(2, '0');
+                const mins = String(date.getMinutes()).padStart(2, '0');
+                setCeremonyTime(`${hours}:${mins}`);
+              }
+            }}
+            showTimeSelect
+            showTimeSelectOnly
+            timeIntervals={5}
+            timeCaption="시간"
+            dateFormat="HH:mm"
+            locale={ko}
             className={inputStyle}
-            value={ceremonyTime}
-            onChange={(e) => setCeremonyTime(e.target.value)}
-          />
-          
+            wrapperClassName="w-full block"  // 추가!
+
+            placeholderText="시간 선택"
+          />  
         
           <label className={labelStyle}>예식 장소</label>
           <input
