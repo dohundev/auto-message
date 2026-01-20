@@ -74,7 +74,7 @@ const setTimeAfter = (time:number) => {
  
   return (
    
-    <main className='min-h-screen bg-gray-100 flex flex-col lg:flex-row justify-center items-center gap-10'>
+    <main className='min-h-screen bg-gray-100 flex flex-col lg:flex-row justify-center items-center gap-10 p-6 py-10'>
     <Toaster   toastOptions={{
       duration: 1500,
       position: 'top-center',
