@@ -35,7 +35,7 @@ export default function Home() {
 // 유효성 검사
 const checkValidation = () => {
   if( !customerName || !weddingDate || !ceremonyTime || !shootTime || !location ) {
-    toast.error('모든 필수 항목을 입력해주세요.')
+    toast.error('모든 필수 항목을 입력해주세요 !')
     return false
   }
   return true
@@ -138,7 +138,7 @@ const setTimeAfter = (time:number) => {
           />
         </div>
       </section>
-      <section className='w-full max-w-md h-[400px] lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-4'>
+      <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-4'>
         <h1 className='text-2xl font-bold text-gray-900'>문자 미리보기 </h1>
         <div className='bg-gray-100 rounded-xl p-4 text-sm text-gray-700 whitespace-pre-line leading-relaxed flex-1 overflow-y-auto my-2'>{message}</div>
         <button
