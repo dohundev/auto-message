@@ -121,7 +121,7 @@ const setTimeAfter = (time:number) => {
             value={shootTime}
             onChange={(e) => setShootTime(e.target.value)}
           />
-          <DatePicker
+          {/* <DatePicker
             selected={shootTime ? new Date(`2000-01-01T${shootTime}`) : null}
             onChange={(date: Date | null) => {
               if (date) {
@@ -142,7 +142,7 @@ const setTimeAfter = (time:number) => {
             onFocus={(e) => e.target.blur()}   
           
 
-          /> 
+          />  */}
           <label className={labelStyle}>본식 시간</label>
          <div>
          <button className='bg-rose-500 text-xs  text-white font-semibold py-2 rounded-xl active:scale-[0.98] transition cursor-pointer p-2 mr-2'
@@ -153,7 +153,7 @@ const setTimeAfter = (time:number) => {
           >1시간 30분 뒤</button> 
          </div>
 
-          <DatePicker
+          {/* <DatePicker
             selected={ceremonyTime ? new Date(`2000-01-01T${ceremonyTime}`) : null}
             onChange={(date: Date | null) => {
               if (date) {
@@ -172,9 +172,13 @@ const setTimeAfter = (time:number) => {
             wrapperClassName="w-full block"   
             placeholderText="시간 선택"
             onFocus={(e) => e.target.blur()}   
-             
-
-          />  
+          />   */}
+          <input
+            type='time'
+            className={inputStyle}
+            value={ceremonyTime}
+            onChange={(e) => setCeremonyTime(e.target.value)}
+          />
         
           <label className={labelStyle}>예식 장소</label>
           <input
