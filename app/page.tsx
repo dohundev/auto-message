@@ -9,7 +9,7 @@ import { MESSAGE_TEMPLATE } from './constants/messageTemplate';
 
 
 const inputStyle =
-  '  rounded-xl bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400';
+  'w-full block rounded-xl bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400';
 const labelStyle = 'block text-sm font-semibold text-gray-800 mb-2';
 
 export default function Home() {
@@ -50,6 +50,7 @@ const copyMessage = () => {
   navigator.clipboard.writeText(message)
   toast.success('복사가 완료되었습니다.')
 }
+
 
 const addMinutesToTime = (baseTime: string, minutesToAdd: number) => {
   if (!baseTime) return '';  
@@ -105,7 +106,7 @@ const setTimeAfter = (time:number) => {
           <label className={labelStyle}>
             날짜
           </label>
-          <DatePicker
+          {/* <DatePicker
             selected={weddingDate}
             onChange={(date: Date | null) => setWeddingDate(date)}
             dateFormat='yyyy.MM.dd'
@@ -113,7 +114,7 @@ const setTimeAfter = (time:number) => {
             className={inputStyle}
             locale={ko}   
             withPortal
-          />
+          /> */}
           <input
             type='date'
             className={inputStyle}
