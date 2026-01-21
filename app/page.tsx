@@ -76,9 +76,15 @@ const setTimeAfter = (time:number) => {
   return (
    
     <main className='min-h-screen bg-gray-100 flex flex-col lg:flex-row justify-center items-center gap-10 p-6 py-10'>
-    <Toaster   toastOptions={{
+    <Toaster   
+    
+    containerStyle={{
+      top: '50%',
+      transform: 'translateY(-20%)',
+    }}
+    toastOptions={{
       duration: 1500,
-      position: 'top-center',
+      position: 'top-center',  
     }} />
       <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl shadow-lg p-6'>
         <h1 className='text-2xl font-bold text-gray-900'>문자 생성기 </h1>
@@ -89,6 +95,7 @@ const setTimeAfter = (time:number) => {
         <label className={labelStyle}>
         이름
           </label>
+         
           <input
             className={inputStyle}
             value={customerName}
@@ -105,7 +112,6 @@ const setTimeAfter = (time:number) => {
             placeholderText='날짜 선택'
             className={inputStyle}
             locale={ko}   
-            popperPlacement="bottom-start"   
             withPortal
           />
           <label className={labelStyle}>촬영 시작</label> 
@@ -124,15 +130,18 @@ const setTimeAfter = (time:number) => {
                 setShootTime(`${hours}:${mins}`);
               } 
             }}
-            showTimeSelect          // 시간 선택 활성화
-            showTimeSelectOnly      // 시간만! (날짜 숨김)
-            timeIntervals={5}      // 30분 간격 (15, 30, 60 등)
-            timeCaption="시간"       // 헤더 텍스트
-            dateFormat="HH:mm"      // 표시 형식
+            showTimeSelect          
+            showTimeSelectOnly      
+            timeIntervals={5}      
+            timeCaption="시간"        
+            dateFormat="HH:mm"       
             locale={ko}
             className={inputStyle}
-            wrapperClassName="w-full block"  // 추가!
+            wrapperClassName="w-full block"  
             placeholderText="시간 선택"
+            onFocus={(e) => e.target.blur()}   
+          
+
           /> 
           <label className={labelStyle}>본식 시간</label>
          <div>
@@ -160,9 +169,11 @@ const setTimeAfter = (time:number) => {
             dateFormat="HH:mm"
             locale={ko}
             className={inputStyle}
-            wrapperClassName="w-full block"  // 추가!
-
+            wrapperClassName="w-full block"   
             placeholderText="시간 선택"
+            onFocus={(e) => e.target.blur()}   
+             
+
           />  
         
           <label className={labelStyle}>예식 장소</label>

@@ -56,5 +56,19 @@ body {
   .react-datepicker__month {
     margin: 0.5rem !important;
   }
+
+  /* 타임피커 드롭다운 width 넓히기 */
+  .react-datepicker__time-container {
+    width: 120px !important;
+  }
+
+  .react-datepicker__time-box {
+    width: 120px !important;
+  }
+
+  .react-datepicker__time-list-item {
+    padding: 8px 16px !important;
+    font-size: 1rem !important;
+  }
 }
  
