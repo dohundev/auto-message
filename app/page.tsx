@@ -7,7 +7,7 @@ import { MESSAGE_TEMPLATE } from './constants/messageTemplate';
 
 
 const inputStyle =
-  'w-full max-w-xs bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400';
+  '  bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400';
 const labelStyle = 'block text-sm font-semibold text-gray-800 mb-2';
 
 export default function Home() {
