@@ -1,15 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { ko } from 'date-fns/locale';
 import toast, { Toaster } from 'react-hot-toast';
 import { MESSAGE_TEMPLATE } from './constants/messageTemplate';
 
 
 const inputStyle =
-  'w-full block rounded-xl bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400';
+  'w-full block   bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400';
 const labelStyle = 'block text-sm font-semibold text-gray-800 mb-2';
 
 export default function Home() {
