@@ -9,7 +9,7 @@ import { MESSAGE_TEMPLATE } from './constants/messageTemplate';
 
 
 const inputStyle =
-  'w-full  rounded-xl bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400';
+  '  rounded-xl bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400';
 const labelStyle = 'block text-sm font-semibold text-gray-800 mb-2';
 
 export default function Home() {
@@ -113,6 +113,12 @@ const setTimeAfter = (time:number) => {
             className={inputStyle}
             locale={ko}   
             withPortal
+          />
+          <input
+            type='date'
+            className={inputStyle}
+            value={weddingDate ? weddingDate.toISOString().split('T')[0] : ''}
+            onChange={(e) => setWeddingDate(new Date(e.target.value) || null)}
           />
           <label className={labelStyle}>촬영 시작</label> 
           <input
