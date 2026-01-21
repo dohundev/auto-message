@@ -115,12 +115,12 @@ const setTimeAfter = (time:number) => {
             withPortal
           />
           <label className={labelStyle}>촬영 시작</label> 
-          {/* <input
+          <input
             type='time'
             className={inputStyle}
             value={shootTime}
             onChange={(e) => setShootTime(e.target.value)}
-          /> */}
+          />
           <DatePicker
             selected={shootTime ? new Date(`2000-01-01T${shootTime}`) : null}
             onChange={(date: Date | null) => {
