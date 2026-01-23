@@ -11,7 +11,7 @@ export const MESSAGE_TEMPLATE = `
 촬영시작: {{shootTime}}
 본식장소: {{location}}
 고객명: {{customerName}}
-진행순서: 신부대기실-본식-원판
+진행순서: 신부대기실-본식-원판{{hasReception}}{{hasSecondPart}}
 
 확인 후 회신부탁드립니다!☺
 ———
