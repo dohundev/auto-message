@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description: '웨딩 촬영 안내 문자를 쉽게 만들어보세요.',
     url: 'https://auto-message-ochre.vercel.app/',
     siteName: '문자 생성기',
-    images: [{ url: 'https://auto-message-ochre.vercel.app/og-image.png' }],
+    images: [{ url: 'og-image.htm' }],
   },
 };
 
