@@ -8,11 +8,13 @@ import { MESSAGE_TEMPLATE } from './constants/messageTemplate';
 const inputStyle =
   'w-full block rounded-xl bg-gray-100 px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400 mb-4';
 const labelStyle = 'block text-sm font-semibold text-gray-800 ';
+const buttonStyle =
+  'w-full bg-indigo-500 text-white font-semibold py-2 rounded-lg active:scale-[0.98] transition cursor-pointer';
 
 export default function Home() {
   const [customerName, setCustomerName] = useState('');
   const [weddingDate, setWeddingDate] = useState<Date | null>(null);
-  const [wakeupTime, setWakeupTime] = useState('08:00');
+  const [wakeTime, setWakeTime] = useState('08:00');
   const [departureTime, setDepartureTime] = useState('09:00');
   const [shootTime, setShootTime] = useState('10:00');
   const [ceremonyTime, setCeremonyTime] = useState('11:00');
@@ -41,6 +43,13 @@ export default function Home() {
     .replace('{{hasReception}}', hasReception ? '-연회' : '')
     .replace('{{hasSecondPart}}', hasSecondPart ? '-2부' : '');
 
+  const scheduleSummary = `
+${weddingDate ? `${formatDateWithDay(weddingDate)}` : ''}
+1. ${shootTime} ${location} ${customerName}
+기상시간 : ${wakeTime}
+출발시간 : ${departureTime}
+`;
+
   // 유효성 검사
   const checkValidation = () => {
     if (
@@ -56,13 +65,36 @@ export default function Home() {
     return true;
   };
 
+  const addSchedule = () => {};
   // 복사하기
   const copyMessage = () => {
-    if (!checkValidation()) {
+    if (activeTab === 'message') {
+      if (!checkValidation()) {
+        return;
+      }
+      navigator.clipboard.writeText(message);
+      toast.success('문자 복사가 완료되었습니다.');
+    } else {
+      if (!checkValidation()) {
+        return;
+      }
+      navigator.clipboard.writeText(scheduleSummary);
+      toast.success('일정 복사가 완료되었습니다.');
+    }
+  };
+
+  const openSmsApp = () => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMobile) {
+      toast.error('모바일 기기에서만 문자 보내기 기능을 사용할 수 있습니다.');
       return;
     }
-    navigator.clipboard.writeText(message);
-    toast.success('복사가 완료되었습니다.');
+
+    const body = encodeURIComponent(message);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const separator = isIOS ? '&' : '?';
+
+    window.location.href = `sms:${separator}body=${body}`;
   };
 
   const addMinutesToTime = (baseTime: string, minutesToAdd: number) => {
@@ -113,7 +145,6 @@ export default function Home() {
         <div className='overflow-y-auto flex-1 px-1'>
           <div className='space-y-2 mb-4'>
             <label className={labelStyle}>이름</label>
-
             <input
               className={inputStyle}
               value={customerName}
@@ -121,15 +152,7 @@ export default function Home() {
               placeholder='고객명을 입력해주세요'
             />
             <label className={labelStyle}>날짜</label>
-            {/* <DatePicker
-            selected={weddingDate}
-            onChange={(date: Date | null) => setWeddingDate(date)}
-            dateFormat='yyyy.MM.dd'
-            placeholderText='날짜 선택'
-            className={inputStyle}
-            locale={ko}   
-            withPortal
-          /> */}
+
             <input
               type='date'
               className={inputStyle}
@@ -140,8 +163,8 @@ export default function Home() {
             <input
               type='time'
               className={inputStyle}
-              value={wakeupTime}
-              onChange={(e) => setWakeupTime(e.target.value)}
+              value={wakeTime}
+              onChange={(e) => setWakeTime(e.target.value)}
             />
             <label className={labelStyle}>출발시간</label>
             <input
@@ -157,28 +180,7 @@ export default function Home() {
               value={shootTime}
               onChange={(e) => setShootTime(e.target.value)}
             />
-            {/* <DatePicker
-            selected={shootTime ? new Date(`2000-01-01T${shootTime}`) : null}
-            onChange={(date: Date | null) => {
-              if (date) {
-                const hours = String(date.getHours()).padStart(2, '0');
-                const mins = String(date.getMinutes()).padStart(2, '0');
-                setShootTime(`${hours}:${mins}`);
-              } 
-            }}
-            showTimeSelect          
-            showTimeSelectOnly      
-            timeIntervals={5}      
-            timeCaption="시간"        
-            dateFormat="HH:mm"       
-            locale={ko}
-            className={inputStyle}
-            wrapperClassName="w-full block"  
-            placeholderText="시간 선택"
-            onFocus={(e) => e.target.blur()}   
-          
 
-          />  */}
             <label className={labelStyle}>본식 시간</label>
             <div>
               <button
@@ -195,26 +197,6 @@ export default function Home() {
               </button>
             </div>
 
-            {/* <DatePicker
-            selected={ceremonyTime ? new Date(`2000-01-01T${ceremonyTime}`) : null}
-            onChange={(date: Date | null) => {
-              if (date) {
-                const hours = String(date.getHours()).padStart(2, '0');
-                const mins = String(date.getMinutes()).padStart(2, '0');
-                setCeremonyTime(`${hours}:${mins}`);
-              }
-            }}
-            showTimeSelect
-            showTimeSelectOnly
-            timeIntervals={5}
-            timeCaption="시간"
-            dateFormat="HH:mm"
-            locale={ko}
-            className={inputStyle}
-            wrapperClassName="w-full block"   
-            placeholderText="시간 선택"
-            onFocus={(e) => e.target.blur()}   
-          />   */}
             <input
               type='time'
               className={inputStyle}
@@ -278,14 +260,28 @@ export default function Home() {
           </button>
         </div>
         <div className='bg-gray-100 rounded-xl p-4 text-sm text-gray-700 whitespace-pre-line leading-relaxed flex-1 overflow-y-auto my-2'>
-          {activeTab === 'message' ? message : ''}
+          {activeTab === 'message' ? message : scheduleSummary}
         </div>
-        <button
-          onClick={() => copyMessage()}
-          className='w-full bg-rose-500 text-white font-semibold py-4 rounded-xl active:scale-[0.98] transition cursor-pointer'
-        >
-          문자 복사하기
-        </button>
+
+        {activeTab === 'message' ? (
+          <div className='flex gap-1'>
+            <button onClick={() => copyMessage()} className={buttonStyle}>
+              문자 복사
+            </button>
+            <button onClick={() => openSmsApp()} className={buttonStyle}>
+              문자 보내기
+            </button>
+          </div>
+        ) : (
+          <div className='flex gap-2'>
+            <button onClick={() => copyMessage()} className={buttonStyle}>
+              일정 복사
+            </button>
+            <button onClick={() => addSchedule()} className={buttonStyle}>
+              일정 추가
+            </button>
+          </div>
+        )}
       </section>
     </main>
   );
