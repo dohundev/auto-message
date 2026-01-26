@@ -9,10 +9,11 @@ const inputStyle =
   'w-full block rounded-xl bg-gray-100 px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400 mb-4';
 const labelStyle = 'block text-sm font-semibold text-gray-800 ';
 const buttonStyle =
-  'w-full bg-indigo-500 text-white font-semibold py-2 rounded-lg active:scale-[0.98] transition cursor-pointer';
+  'w-full bg-black text-white font-semibold py-2 rounded-lg active:scale-[0.98] transition cursor-pointer';
 
 export default function Home() {
   const [customerName, setCustomerName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [weddingDate, setWeddingDate] = useState<Date | null>(null);
   const [wakeTime, setWakeTime] = useState('08:00');
   const [departureTime, setDepartureTime] = useState('09:00');
@@ -94,7 +95,8 @@ ${weddingDate ? `${formatDateWithDay(weddingDate)}` : ''}
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const separator = isIOS ? '&' : '?';
 
-    window.location.href = `sms:${separator}body=${body}`;
+    const phone = phoneNumber.replace(/-/g, ''); // 하이픈 제거
+    window.location.href = `sms:${phone}${separator}body=${body}`;
   };
 
   const addMinutesToTime = (baseTime: string, minutesToAdd: number) => {
@@ -150,6 +152,13 @@ ${weddingDate ? `${formatDateWithDay(weddingDate)}` : ''}
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
               placeholder='고객명을 입력해주세요'
+            />
+            <label className={labelStyle}>전화번호</label>
+            <input
+              className={inputStyle}
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder='전화번호를 입력해주세요'
             />
             <label className={labelStyle}>날짜</label>
 
