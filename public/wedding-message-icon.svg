@@ -1,0 +1,27 @@
+<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="100%" stop-color="#c084fc" />
+    </linearGradient>
+    <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#f43f5e" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="60" cy="60" r="60" fill="url(#bgGradient)" />
+  
+  <!-- Message bubble -->
+  <rect x="20" y="40" width="80" height="50" rx="10" fill="white" opacity="0.95" />
+  <path d="M 40 90 L 45 75 L 50 90 Z" fill="white" opacity="0.95" />
+  
+  <!-- Heart icon -->
+  <path d="M 60 55 C 60 55, 55 48, 48 48 C 42 48, 38 52, 38 57 C 38 65, 48 72, 60 78 C 72 72, 82 65, 82 57 C 82 52, 78 48, 72 48 C 65 48, 60 55, 60 55 Z" fill="url(#heartGradient)" />
+  
+  <!-- Sparkle effects -->
+  <circle cx="25" cy="25" r="3" fill="white" opacity="0.8" />
+  <circle cx="95" cy="30" r="2" fill="white" opacity="0.8" />
+  <circle cx="90" cy="95" r="2.5" fill="white" opacity="0.8" />
+</svg>
