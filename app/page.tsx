@@ -14,7 +14,7 @@ const buttonStyle =
 export default function Home() {
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [weddingDate, setWeddingDate] = useState<Date | null>(null);
+  const [weddingDate, setWeddingDate] = useState<Date | null>(new Date());
   const [wakeTime, setWakeTime] = useState('08:00');
   const [departureTime, setDepartureTime] = useState('09:00');
   const [shootTime, setShootTime] = useState('10:00');
