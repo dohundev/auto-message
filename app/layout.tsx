@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  manifest: '/manifest.json',
   title: '문자 생성기',
   description: '웨딩 촬영 안내 문자를 쉽게 만들어보세요.',
   openGraph: {
@@ -22,6 +23,13 @@ export const metadata: Metadata = {
     siteName: '문자 생성기',
     images: [{ url: 'og-image.png' }],
   },
+};
+
+export const viewport = {
+  themeColor: '#000000',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
