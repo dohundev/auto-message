@@ -6,17 +6,20 @@ import toast, { Toaster } from 'react-hot-toast';
 import { MESSAGE_TEMPLATE } from './constants/messageTemplate';
 
 const inputStyle =
-  'w-full block rounded-xl bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400 mb-4';
+  'w-full block rounded-xl bg-gray-100 px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400 mb-4';
 const labelStyle = 'block text-sm font-semibold text-gray-800 ';
 
 export default function Home() {
   const [customerName, setCustomerName] = useState('');
   const [weddingDate, setWeddingDate] = useState<Date | null>(null);
+  const [wakeupTime, setWakeupTime] = useState('08:00');
+  const [departureTime, setDepartureTime] = useState('09:00');
   const [shootTime, setShootTime] = useState('10:00');
   const [ceremonyTime, setCeremonyTime] = useState('11:00');
   const [location, setLocation] = useState('');
   const [hasReception, setHasReception] = useState(false);
   const [hasSecondPart, setHasSecondPart] = useState(false);
+  const [activeTab, setActiveTab] = useState('message');
 
   const formatDateWithDay = (data: Date) => {
     const days = ['일', '월', '화', '수', '목', '금', '토'];
@@ -102,22 +105,23 @@ export default function Home() {
           position: 'top-center',
         }}
       />
-      <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl shadow-lg p-6'>
+      <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-3'>
         <h1 className='text-2xl font-bold text-gray-900'>문자 생성기 </h1>
         <p className='text-sm text-gray-500 mb-3'>
           입력만 하면 바로 복사해서 전송하세요
         </p>
-        <div className='space-y-2 mb-4'>
-          <label className={labelStyle}>이름</label>
+        <div className='overflow-y-auto flex-1 px-1'>
+          <div className='space-y-2 mb-4'>
+            <label className={labelStyle}>이름</label>
 
-          <input
-            className={inputStyle}
-            value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
-            placeholder='고객명을 입력해주세요'
-          />
-          <label className={labelStyle}>날짜</label>
-          {/* <DatePicker
+            <input
+              className={inputStyle}
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              placeholder='고객명을 입력해주세요'
+            />
+            <label className={labelStyle}>날짜</label>
+            {/* <DatePicker
             selected={weddingDate}
             onChange={(date: Date | null) => setWeddingDate(date)}
             dateFormat='yyyy.MM.dd'
@@ -126,20 +130,34 @@ export default function Home() {
             locale={ko}   
             withPortal
           /> */}
-          <input
-            type='date'
-            className={inputStyle}
-            value={weddingDate ? weddingDate.toISOString().split('T')[0] : ''}
-            onChange={(e) => setWeddingDate(new Date(e.target.value) || null)}
-          />
-          <label className={labelStyle}>촬영 시작</label>
-          <input
-            type='time'
-            className={inputStyle}
-            value={shootTime}
-            onChange={(e) => setShootTime(e.target.value)}
-          />
-          {/* <DatePicker
+            <input
+              type='date'
+              className={inputStyle}
+              value={weddingDate ? weddingDate.toISOString().split('T')[0] : ''}
+              onChange={(e) => setWeddingDate(new Date(e.target.value) || null)}
+            />
+            <label className={labelStyle}>기상시간</label>
+            <input
+              type='time'
+              className={inputStyle}
+              value={wakeupTime}
+              onChange={(e) => setWakeupTime(e.target.value)}
+            />
+            <label className={labelStyle}>출발시간</label>
+            <input
+              type='time'
+              className={inputStyle}
+              value={departureTime}
+              onChange={(e) => setDepartureTime(e.target.value)}
+            />
+            <label className={labelStyle}>촬영 시작</label>
+            <input
+              type='time'
+              className={inputStyle}
+              value={shootTime}
+              onChange={(e) => setShootTime(e.target.value)}
+            />
+            {/* <DatePicker
             selected={shootTime ? new Date(`2000-01-01T${shootTime}`) : null}
             onChange={(date: Date | null) => {
               if (date) {
@@ -161,23 +179,23 @@ export default function Home() {
           
 
           />  */}
-          <label className={labelStyle}>본식 시간</label>
-          <div>
-            <button
-              className='bg-rose-500 text-xs  text-white font-semibold py-2 rounded-xl active:scale-[0.98] transition cursor-pointer p-2 mr-2'
-              onClick={() => setTimeAfter(60)}
-            >
-              1시간 뒤
-            </button>
-            <button
-              className='bg-rose-500 text-xs  text-white font-semibold py-2 rounded-xl active:scale-[0.98] transition cursor-pointer p-2 mr-2'
-              onClick={() => setTimeAfter(90)}
-            >
-              1시간 30분 뒤
-            </button>
-          </div>
+            <label className={labelStyle}>본식 시간</label>
+            <div>
+              <button
+                className='bg-rose-500 text-xs  text-white font-semibold py-2 rounded-xl active:scale-[0.98] transition cursor-pointer p-2 mr-2'
+                onClick={() => setTimeAfter(60)}
+              >
+                1시간 뒤
+              </button>
+              <button
+                className='bg-rose-500 text-xs  text-white font-semibold py-2 rounded-xl active:scale-[0.98] transition cursor-pointer p-2 mr-2'
+                onClick={() => setTimeAfter(90)}
+              >
+                1시간 30분 뒤
+              </button>
+            </div>
 
-          {/* <DatePicker
+            {/* <DatePicker
             selected={ceremonyTime ? new Date(`2000-01-01T${ceremonyTime}`) : null}
             onChange={(date: Date | null) => {
               if (date) {
@@ -197,52 +215,74 @@ export default function Home() {
             placeholderText="시간 선택"
             onFocus={(e) => e.target.blur()}   
           />   */}
-          <input
-            type='time'
-            className={inputStyle}
-            value={ceremonyTime}
-            onChange={(e) => setCeremonyTime(e.target.value)}
-          />
+            <input
+              type='time'
+              className={inputStyle}
+              value={ceremonyTime}
+              onChange={(e) => setCeremonyTime(e.target.value)}
+            />
 
-          <div className='flex items-center gap-2'>
-            <label className={labelStyle}>예식 장소</label>
-            <button
-              className={`text-xs font-semibold py-2 rounded-xl p-2  transition ${
-                hasReception
-                  ? 'bg-indigo-500 text-white'
-                  : 'bg-gray-200 text-gray-500'
-              }`}
-              onClick={setHasReceptionToggle}
-            >
-              연회
-            </button>
-            <button
-              className={`text-xs font-semibold py-2 rounded-xl p-2  transition ${
-                hasSecondPart
-                  ? 'bg-slate-700 text-white'
-                  : 'bg-slate-200 text-slate-400'
-              }`}
-              onClick={setHasSecondPartToggle}
-            >
-              2부
-            </button>
+            <div className='flex items-center gap-2'>
+              <label className={labelStyle}>예식 장소</label>
+              <button
+                className={`text-xs font-semibold py-2 rounded-xl p-2  transition ${
+                  hasReception
+                    ? 'bg-indigo-500 text-white'
+                    : 'bg-gray-200 text-gray-500'
+                }`}
+                onClick={setHasReceptionToggle}
+              >
+                연회
+              </button>
+              <button
+                className={`text-xs font-semibold py-2 rounded-xl p-2  transition ${
+                  hasSecondPart
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-200 text-slate-400'
+                }`}
+                onClick={setHasSecondPartToggle}
+              >
+                2부
+              </button>
+            </div>
+            <input
+              className={inputStyle}
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder='장소를 입력해주세요'
+            />
           </div>
-          <input
-            className={inputStyle}
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder='장소를 입력해주세요'
-          />
         </div>
       </section>
       <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-4'>
-        <h1 className='text-2xl font-bold text-gray-900'>문자 미리보기 </h1>
+        <div className='flex gap-2 mb-3'>
+          <button
+            onClick={() => setActiveTab('message')}
+            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${
+              activeTab === 'message'
+                ? 'bg-rose-500 text-white'
+                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            }`}
+          >
+            문자 미리보기
+          </button>
+          <button
+            onClick={() => setActiveTab('schedule')}
+            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${
+              activeTab === 'schedule'
+                ? 'bg-rose-500 text-white'
+                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            }`}
+          >
+            스케줄 요약
+          </button>
+        </div>
         <div className='bg-gray-100 rounded-xl p-4 text-sm text-gray-700 whitespace-pre-line leading-relaxed flex-1 overflow-y-auto my-2'>
-          {message}
+          {activeTab === 'message' ? message : ''}
         </div>
         <button
           onClick={() => copyMessage()}
-          className='w-full bg-rose-500 text-white font-semibold py-4 rounded-xl active:scale-[0.98] transitio cursor-pointer'
+          className='w-full bg-rose-500 text-white font-semibold py-4 rounded-xl active:scale-[0.98] transition cursor-pointer'
         >
           문자 복사하기
         </button>
