@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   manifest: '/manifest.json',
-  title: '문자 편하게 보내기',
+  title: '문자 생성기',
   description: '웨딩 촬영 안내 문자 보내기',
   openGraph: {
     url: 'https://auto-message-ochre.vercel.app/',

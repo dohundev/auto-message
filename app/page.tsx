@@ -10,8 +10,6 @@ const inputStyle =
 const labelStyle = 'block text-sm font-semibold text-gray-800 ';
 const buttonStyle =
   'w-full bg-black text-white font-semibold py-2 rounded-lg active:scale-[0.98] transition cursor-pointer';
-const requiredLabelStyle =
-  'block text-sm font-semibold text-gray-800 after:content-["*"] after:ml-0.5 after:text-rose-500';
 
 export default function Home() {
   const [customerName, setCustomerName] = useState('');
@@ -69,7 +67,16 @@ export default function Home() {
       !shootTime ||
       !location
     ) {
-      toast.error('모든 필수 항목을 입력해주세요.');
+      toast('모든 필수 항목을 입력해주세요.', {
+        icon: '❌',
+        style: {
+          borderRadius: '10px',
+          background: '#fff',
+          color: '#333',
+          fontWeight: 'bold',
+        },
+      });
+
       return false;
     }
     return true;
@@ -82,13 +89,29 @@ export default function Home() {
         return;
       }
       navigator.clipboard.writeText(message);
-      toast.success('문자 복사가 완료되었습니다.');
+      toast('문자 복사가 완료되었습니다.', {
+        icon: '✔︎',
+        style: {
+          borderRadius: '10px',
+          background: '#333',
+          color: '#fff',
+          fontWeight: 'bold',
+        },
+      });
     } else {
       if (!checkValidation()) {
         return;
       }
       navigator.clipboard.writeText(scheduleSummary);
-      toast.success('일정 복사가 완료되었습니다.');
+      toast('일정 복사가 완료되었습니다.', {
+        icon: '✔︎',
+        style: {
+          borderRadius: '10px',
+          background: '#333',
+          color: '#fff',
+          fontWeight: 'bold',
+        },
+      });
     }
   };
 
@@ -99,7 +122,16 @@ export default function Home() {
 
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (!isMobile) {
-      toast.error('모바일 기기에서만 문자 보내기 기능을 사용할 수 있습니다.');
+      toast('모바일 기기에서만 문자를 보낼 수 있습니다.', {
+        icon: '❌',
+        style: {
+          borderRadius: '10px',
+          background: '#fff',
+          color: '#333',
+          fontWeight: 'bold',
+        },
+      });
+
       return;
     }
 
@@ -162,7 +194,7 @@ export default function Home() {
         : `${mins}분`;
 
     toast(`본식 시간이 ${timeText} 뒤 설정 되었습니다`, {
-      icon: '👏',
+      icon: '✔︎',
       style: {
         borderRadius: '10px',
         background: '#333',
@@ -182,6 +214,40 @@ export default function Home() {
     setHasSecondPart(!hasSecondPart);
   };
 
+  const setDateToWeekday = (targetDay: number) => {
+    const date = new Date();
+    const today = date.getDay(); // 0=일, 6=토
+
+    // 오늘 기준으로 다가오는 targetDay까지 남은 일수
+    const diff = (targetDay - today + 7) % 7;
+    date.setDate(date.getDate() + diff);
+
+    setWeddingDate(date);
+  };
+
+  const reset = () => {
+    setCustomerName('');
+    setPhoneNumber('');
+    setWeddingDate(new Date());
+    setShootTime('10:00');
+    setCeremonyTime('11:00');
+    setLocation('');
+    setHasReception(false);
+    setHasSecondPart(false);
+    setWakeTime('08:00');
+    setDepartureTime('09:00');
+
+    toast('초기화 되었습니다', {
+      icon: '✔︎',
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+        fontWeight: 'bold',
+      },
+    });
+  };
+
   return (
     <main className='min-h-screen bg-gray-100 flex flex-col lg:flex-row justify-center items-center gap-10 p-6 py-10'>
       <Toaster position='top-center' reverseOrder={false} />
@@ -191,6 +257,15 @@ export default function Home() {
           입력만 하면 바로 복사해서 전송하세요
         </p>
         <div className='overflow-y-auto flex-1 px-1'>
+          <div className='flex'>
+            <button
+              onClick={reset}
+              className='ml-auto text-sm text-gray-500 underline'
+            >
+              전체 초기화
+            </button>
+          </div>
+
           <div className='space-y-2 mb-4'>
             <label className={labelStyle}>
               이름 <span className='text-rose-500 '>*</span>
@@ -210,9 +285,23 @@ export default function Home() {
               onChange={(e) => handlePhoneChange(e.target.value)}
               placeholder='전화번호를 입력해주세요'
             />
-            <label className={labelStyle}>
-              날짜 <span className='text-rose-500 '>*</span>
-            </label>
+            <div className='flex items-center gap-2'>
+              <label className={labelStyle}>
+                날짜 <span className='text-rose-500 '>*</span>
+              </label>
+              <button
+                className='bg-rose-500 text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
+                onClick={() => setDateToWeekday(6)}
+              >
+                토요일
+              </button>
+              <button
+                className='bg-rose-500 text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
+                onClick={() => setDateToWeekday(0)}
+              >
+                일요일
+              </button>
+            </div>
             <input
               type='date'
               className={inputStyle}
