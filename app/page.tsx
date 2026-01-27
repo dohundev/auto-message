@@ -10,6 +10,8 @@ const inputStyle =
 const labelStyle = 'block text-sm font-semibold text-gray-800 ';
 const buttonStyle =
   'w-full bg-black text-white font-semibold py-2 rounded-lg active:scale-[0.98] transition cursor-pointer';
+const requiredLabelStyle =
+  'block text-sm font-semibold text-gray-800 after:content-["*"] after:ml-0.5 after:text-rose-500';
 
 export default function Home() {
   const [customerName, setCustomerName] = useState('');
@@ -32,6 +34,13 @@ export default function Home() {
     return `${year}. ${month}. ${day} (${days[data.getDay()]})`;
   };
 
+  const formatDateShort = (date: Date) => {
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${month}/${day}(${days[date.getDay()]})`;
+  };
+
   const message = MESSAGE_TEMPLATE.replace(
     '{{weddingDateTime}}',
     weddingDate
@@ -45,10 +54,10 @@ export default function Home() {
     .replace('{{hasSecondPart}}', hasSecondPart ? '-2부' : '');
 
   const scheduleSummary = `
-${weddingDate ? `${formatDateWithDay(weddingDate)}` : ''}
-1. ${shootTime} ${location} ${customerName}
-기상시간 : ${wakeTime}
-출발시간 : ${departureTime}
+  ${weddingDate ? `${formatDateShort(weddingDate)}` : ''}
+  1. ${shootTime} ${location} ${customerName}
+  기상 : ${wakeTime} 
+  출발 : ${departureTime}
 `;
 
   // 유효성 검사
@@ -60,13 +69,12 @@ ${weddingDate ? `${formatDateWithDay(weddingDate)}` : ''}
       !shootTime ||
       !location
     ) {
-      toast.error('모든 필수 항목을 입력해주세요 !');
+      toast.error('모든 필수 항목을 입력해주세요.');
       return false;
     }
     return true;
   };
 
-  const addSchedule = () => {};
   // 복사하기
   const copyMessage = () => {
     if (activeTab === 'message') {
@@ -85,6 +93,10 @@ ${weddingDate ? `${formatDateWithDay(weddingDate)}` : ''}
   };
 
   const openSmsApp = () => {
+    if (!checkValidation()) {
+      return;
+    }
+
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (!isMobile) {
       toast.error('모바일 기기에서만 문자 보내기 기능을 사용할 수 있습니다.');
@@ -110,12 +122,55 @@ ${weddingDate ? `${formatDateWithDay(weddingDate)}` : ''}
     return `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
   };
 
+  const handleShootTimeChange = (time: string) => {
+    if (!time) return;
+    setShootTime(time);
+    setDepartureTime(addMinutesToTime(time, -60));
+    setWakeTime(addMinutesToTime(time, -120));
+    setCeremonyTime(addMinutesToTime(time, 60));
+  };
+
+  const handlePhoneChange = (phone: string) => {
+    const numbers = phone.replace(/[^0-9]/g, '');
+
+    // 포맷팅
+    let formatted = '';
+    if (numbers.length <= 3) {
+      formatted = numbers;
+    } else if (numbers.length <= 7) {
+      formatted = `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+    } else {
+      formatted = `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+    }
+
+    setPhoneNumber(formatted);
+  };
+
   const setTimeAfter = (time: number) => {
     if (!shootTime) {
       toast.error('먼저 촬영 시작 시간을 입력해주세요.');
       return;
     }
-    toast.success(`${time}분 뒤 본식 시간이 설정되었습니다.`);
+
+    const hours = Math.floor(time / 60);
+    const mins = time % 60;
+    const timeText =
+      hours > 0
+        ? mins > 0
+          ? `${hours}시간 ${mins}분`
+          : `${hours}시간`
+        : `${mins}분`;
+
+    toast(`본식 시간이 ${timeText} 뒤 설정 되었습니다`, {
+      icon: '👏',
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+        fontWeight: 'bold',
+      },
+    });
+
     const newTime = addMinutesToTime(shootTime, time);
     setCeremonyTime(newTime);
   };
@@ -129,16 +184,7 @@ ${weddingDate ? `${formatDateWithDay(weddingDate)}` : ''}
 
   return (
     <main className='min-h-screen bg-gray-100 flex flex-col lg:flex-row justify-center items-center gap-10 p-6 py-10'>
-      <Toaster
-        containerStyle={{
-          top: '50%',
-          transform: 'translateY(-20%)',
-        }}
-        toastOptions={{
-          duration: 1500,
-          position: 'top-center',
-        }}
-      />
+      <Toaster position='top-center' reverseOrder={false} />
       <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-3'>
         <h1 className='text-2xl font-bold text-gray-900'>문자 생성기 </h1>
         <p className='text-sm text-gray-500 mb-3'>
@@ -146,75 +192,63 @@ ${weddingDate ? `${formatDateWithDay(weddingDate)}` : ''}
         </p>
         <div className='overflow-y-auto flex-1 px-1'>
           <div className='space-y-2 mb-4'>
-            <label className={labelStyle}>이름</label>
+            <label className={labelStyle}>
+              이름 <span className='text-rose-500 '>*</span>
+            </label>
             <input
               className={inputStyle}
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
               placeholder='고객명을 입력해주세요'
             />
-            <label className={labelStyle}>전화번호</label>
+            <label className={labelStyle}>
+              전화번호 <span className='text-rose-500 '>*</span>
+            </label>
             <input
               className={inputStyle}
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={(e) => handlePhoneChange(e.target.value)}
               placeholder='전화번호를 입력해주세요'
             />
-            <label className={labelStyle}>날짜</label>
-
+            <label className={labelStyle}>
+              날짜 <span className='text-rose-500 '>*</span>
+            </label>
             <input
               type='date'
               className={inputStyle}
               value={weddingDate ? weddingDate.toISOString().split('T')[0] : ''}
               onChange={(e) => setWeddingDate(new Date(e.target.value) || null)}
             />
-            <label className={labelStyle}>기상시간</label>
-            <input
-              type='time'
-              className={inputStyle}
-              value={wakeTime}
-              onChange={(e) => setWakeTime(e.target.value)}
-            />
-            <label className={labelStyle}>출발시간</label>
-            <input
-              type='time'
-              className={inputStyle}
-              value={departureTime}
-              onChange={(e) => setDepartureTime(e.target.value)}
-            />
-            <label className={labelStyle}>촬영 시작</label>
+            <label className={labelStyle}>
+              촬영 시작 시간 <span className='text-rose-500 '>*</span>
+            </label>
             <input
               type='time'
               className={inputStyle}
               value={shootTime}
-              onChange={(e) => setShootTime(e.target.value)}
+              onChange={(e) => handleShootTimeChange(e.target.value as string)}
             />
-
-            <label className={labelStyle}>본식 시간</label>
-            <div>
+            <div className='flex items-center gap-2'>
+              <label className={labelStyle}>
+                본식 시간 <span className='text-rose-500 '>*</span>
+              </label>
               <button
-                className='bg-rose-500 text-xs  text-white font-semibold py-2 rounded-xl active:scale-[0.98] transition cursor-pointer p-2 mr-2'
-                onClick={() => setTimeAfter(60)}
-              >
-                1시간 뒤
-              </button>
-              <button
-                className='bg-rose-500 text-xs  text-white font-semibold py-2 rounded-xl active:scale-[0.98] transition cursor-pointer p-2 mr-2'
+                className='bg-rose-500 text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
                 onClick={() => setTimeAfter(90)}
               >
-                1시간 30분 뒤
+                +1시간 30분
               </button>
             </div>
-
             <input
               type='time'
               className={inputStyle}
               value={ceremonyTime}
               onChange={(e) => setCeremonyTime(e.target.value)}
             />
-
             <div className='flex items-center gap-2'>
-              <label className={labelStyle}>예식 장소</label>
+              <label className={labelStyle}>
+                예식 장소 <span className='text-rose-500 '>*</span>
+              </label>
               <button
                 className={`text-xs font-semibold py-2 rounded-xl p-2  transition ${
                   hasReception
@@ -241,6 +275,20 @@ ${weddingDate ? `${formatDateWithDay(weddingDate)}` : ''}
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder='장소를 입력해주세요'
+            />
+            <label className={labelStyle}>기상시간</label>
+            <input
+              type='time'
+              className={inputStyle}
+              value={wakeTime}
+              onChange={(e) => setWakeTime(e.target.value)}
+            />
+            <label className={labelStyle}>출발시간</label>
+            <input
+              type='time'
+              className={inputStyle}
+              value={departureTime}
+              onChange={(e) => setDepartureTime(e.target.value)}
             />
           </div>
         </div>
@@ -286,9 +334,9 @@ ${weddingDate ? `${formatDateWithDay(weddingDate)}` : ''}
             <button onClick={() => copyMessage()} className={buttonStyle}>
               일정 복사
             </button>
-            <button onClick={() => addSchedule()} className={buttonStyle}>
+            {/* <button onClick={() => addSchedule()} className={buttonStyle}>
               일정 추가
-            </button>
+            </button> */}
           </div>
         )}
       </section>
