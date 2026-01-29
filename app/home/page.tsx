@@ -272,7 +272,7 @@ export default function Home() {
   };
 
   return (
-    <div className='size-full'>
+    <div className='size-full page-fade-in'>
       <main className='min-h-screen bg-gray-100 flex flex-col lg:flex-row justify-center items-center gap-10 p-6 py-10'>
         <Toaster position='top-center' reverseOrder={false} />
         <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-3'>
