@@ -13,7 +13,7 @@ const buttonStyle =
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
-  const [fadeOut, setFadeOut] = useState(false);
+  const [fadeOut, setFadeOut] = useState(true);
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [weddingDate, setWeddingDate] = useState<Date | null>(new Date());
@@ -251,16 +251,24 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const fadeTimer = setTimeout(() => {
-      setFadeOut(true);
-    }, 500);
+    // 1) 처음에는 투명(opacity-0) 상태에서 서서히 나타났다(fade-in)
+    const fadeInTimer = setTimeout(() => {
+      setFadeOut(false);
+    }, 50);
 
+    // 2) 잠시 보여준 뒤 다시 서서히 사라지게(fade-out)
+    const fadeOutTimer = setTimeout(() => {
+      setFadeOut(true);
+    }, 900);
+
+    // 3) 완전히 사라진 뒤에는 DOM에서 제거
     const hideTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 1000);
+    }, 1400);
 
     return () => {
-      clearTimeout(fadeTimer);
+      clearTimeout(fadeInTimer);
+      clearTimeout(fadeOutTimer);
       clearTimeout(hideTimer);
     };
   }, []);
@@ -281,9 +289,8 @@ export default function Home() {
                 letterSpacing: '0.3em',
               }}
             >
-              LE LANG FILM
+              L FILM
             </h1>
-
             <h2
               className='text-white text-4xl md:text-5xl tracking-widest font-light'
               style={{
@@ -291,7 +298,7 @@ export default function Home() {
                 letterSpacing: '0.3em',
               }}
             >
-              Cozy Record
+              C RECORD
             </h2>
           </div>
         </div>
