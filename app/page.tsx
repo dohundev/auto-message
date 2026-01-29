@@ -13,7 +13,7 @@ const buttonStyle =
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
-  const [fadeOut, setFadeOut] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [weddingDate, setWeddingDate] = useState<Date | null>(new Date());
@@ -251,24 +251,16 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // 1) 처음에는 투명(opacity-0) 상태에서 서서히 나타났다(fade-in)
-    const fadeInTimer = setTimeout(() => {
-      setFadeOut(false);
-    }, 50);
-
-    // 2) 잠시 보여준 뒤 다시 서서히 사라지게(fade-out)
-    const fadeOutTimer = setTimeout(() => {
+    const fadeTimer = setTimeout(() => {
       setFadeOut(true);
-    }, 900);
+    }, 1000);
 
-    // 3) 완전히 사라진 뒤에는 DOM에서 제거
     const hideTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 1400);
+    }, 2000);
 
     return () => {
-      clearTimeout(fadeInTimer);
-      clearTimeout(fadeOutTimer);
+      clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
     };
   }, []);
@@ -291,6 +283,9 @@ export default function Home() {
             >
               L FILM
             </h1>
+
+            <div className='w-full h-px bg-white/70 mx-auto my-5' />
+
             <h2
               className='text-white text-4xl md:text-5xl tracking-widest font-light'
               style={{
