@@ -1,8 +1,9 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #ffffffff;
-  --foreground: #000000ff;
+  /* 초기 페인트에서 흰 화면이 번쩍 보이지 않도록 배경을 검은색으로 설정 */
+  --background: #000000ff;
+  --foreground: #ffffffff;
 }
 
 @theme inline {
@@ -14,8 +15,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #ffffffff;
-    --foreground: #000000ff;
+    --background: #000000ff;
+    --foreground: #ffffffff;
   }
 }
 

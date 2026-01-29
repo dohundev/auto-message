@@ -269,7 +269,7 @@ export default function Home() {
     <div className='size-full'>
       {showSplash && (
         <div
-          className={`fixed inset-0 bg-black flex items-center justify-center z-50 transition-opacity duration-500 ${
+          className={`fixed left-0 top-0 w-full h-dvh bg-black flex items-center justify-center z-50 transition-opacity duration-500 ${
             fadeOut ? 'opacity-0' : 'opacity-100'
           }`}
         >
