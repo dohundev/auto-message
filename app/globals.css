@@ -1,9 +1,8 @@
 @import 'tailwindcss';
 
 :root {
-  /* 초기 페인트에서 흰 화면이 번쩍 보이지 않도록 배경을 검은색으로 설정 */
-  --background: #000000ff;
-  --foreground: #ffffffff;
+  --background: #ffffffff;
+  --foreground: #000000ff;
 }
 
 @theme inline {
@@ -15,8 +14,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #000000ff;
-    --foreground: #ffffffff;
+    --background: #ffffffff;
+    --foreground: #000000ff;
   }
 }
 
@@ -49,25 +48,4 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-}
- 
-/* 스플래쉬 전용 CSS 애니메이션 (JS 상태 없이 부드럽게) */
-.splash-overlay {
-  animation: splash-fade 1.8s ease-out forwards;
-}
-
-@keyframes splash-fade {
-  0% {
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  70% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    visibility: hidden; /* 애니메이션 끝나면 자동으로 안 보이게 */
-  }
 }
