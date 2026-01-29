@@ -11,12 +11,12 @@ export default function SplashPage() {
     // 3초 후 페이드 아웃 시작
     const showTimer = setTimeout(() => {
       setIsExiting(true);
-    }, 2000);
+    }, 1000);
 
     // 페이드 아웃 끝난 뒤(0.5초) 페이지 이동
     const leaveTimer = setTimeout(() => {
       router.replace('/home');
-    }, 2500); // 3000 + 500ms
+    }, 1500); // 3000 + 500ms
 
     return () => {
       clearTimeout(showTimer);
