@@ -267,33 +267,35 @@ export default function Home() {
 
   return (
     <div className='size-full'>
-      <div
-        className={`fixed inset-0 bg-black flex items-center justify-center z-50 transition-opacity duration-500 ${
-          fadeOut ? 'opacity-0' : 'opacity-100'
-        }`}
-      >
-        <div className='text-center animate-splash'>
-          <h1
-            className='text-white text-4xl md:text-5xl tracking-widest font-light'
-            style={{
-              fontFamily: "'Playfair Display', 'Georgia', serif",
-              letterSpacing: '0.3em',
-            }}
-          >
-            LE LANG FILM
-          </h1>
+      {showSplash && (
+        <div
+          className={`fixed inset-0 bg-black flex items-center justify-center z-50 transition-opacity duration-500 ${
+            fadeOut ? 'opacity-0' : 'opacity-100'
+          }`}
+        >
+          <div className='text-center animate-splash'>
+            <h1
+              className='text-white text-4xl md:text-5xl tracking-widest font-light'
+              style={{
+                fontFamily: "'Playfair Display', 'Georgia', serif",
+                letterSpacing: '0.3em',
+              }}
+            >
+              LE LANG FILM
+            </h1>
 
-          <h2
-            className='text-white text-4xl md:text-5xl tracking-widest font-light'
-            style={{
-              fontFamily: "'Playfair Display', 'Georgia', serif",
-              letterSpacing: '0.3em',
-            }}
-          >
-            Cozy Record
-          </h2>
+            <h2
+              className='text-white text-4xl md:text-5xl tracking-widest font-light'
+              style={{
+                fontFamily: "'Playfair Display', 'Georgia', serif",
+                letterSpacing: '0.3em',
+              }}
+            >
+              Cozy Record
+            </h2>
+          </div>
         </div>
-      </div>
+      )}
       <main className='min-h-screen bg-gray-100 flex flex-col lg:flex-row justify-center items-center gap-10 p-6 py-10'>
         <Toaster position='top-center' reverseOrder={false} />
         <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-3'>
@@ -481,7 +483,6 @@ export default function Home() {
           )}
         </section>
       </main>
-      )
     </div>
   );
 }
