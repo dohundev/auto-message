@@ -1,35 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function SplashPage() {
   const router = useRouter();
-  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
-    // 3초 후 페이드 아웃 시작
-    const showTimer = setTimeout(() => {
-      setIsExiting(true);
-    }, 300);
-
-    // 페이드 아웃 끝난 뒤(0.5초) 페이지 이동
-    const leaveTimer = setTimeout(() => {
+    const timer = setTimeout(() => {
       router.replace('/home');
-    }, 500); // 3000 + 500ms
+    }, 1000);
 
-    return () => {
-      clearTimeout(showTimer);
-      clearTimeout(leaveTimer);
-    };
+    return () => clearTimeout(timer);
   }, [router]);
 
   return (
-    <div
-      className={`fixed inset-0 bg-black flex items-center justify-center transition-opacity duration-500 ${
-        isExiting ? 'opacity-0' : 'opacity-100'
-      }`}
-    >
+    <div className='fixed inset-0 bg-black flex items-center justify-center'>
       <div className='text-center'>
         <h1
           className='text-white text-4xl md:text-5xl tracking-widest font-light'
