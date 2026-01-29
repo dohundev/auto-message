@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import toast, { Toaster } from 'react-hot-toast';
 import { MESSAGE_TEMPLATE } from './constants/messageTemplate';
@@ -12,6 +12,8 @@ const buttonStyle =
   'w-full bg-black text-white font-semibold py-2 rounded-lg active:scale-[0.98] transition cursor-pointer';
 
 export default function Home() {
+  const [showSplash, setShowSplash] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [weddingDate, setWeddingDate] = useState<Date | null>(new Date());
@@ -248,187 +250,238 @@ export default function Home() {
     });
   };
 
+  useEffect(() => {
+    const fadeTimer = setTimeout(() => {
+      setFadeOut(true);
+    }, 500);
+
+    const hideTimer = setTimeout(() => {
+      setShowSplash(false);
+    }, 1000);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(hideTimer);
+    };
+  }, []);
+
   return (
-    <main className='min-h-screen bg-gray-100 flex flex-col lg:flex-row justify-center items-center gap-10 p-6 py-10'>
-      <Toaster position='top-center' reverseOrder={false} />
-      <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-3'>
-        <h1 className='text-2xl font-bold text-gray-900'>문자 생성기 </h1>
-        <p className='text-sm text-gray-500 mb-3'>
-          입력만 하면 바로 복사해서 전송하세요
-        </p>
-        <div className='overflow-y-auto flex-1 px-1'>
-          <div className='flex'>
+    <div className='size-full'>
+      <div
+        className={`fixed inset-0 bg-black flex items-center justify-center z-50 transition-opacity duration-500 ${
+          fadeOut ? 'opacity-0' : 'opacity-100'
+        }`}
+      >
+        <div className='text-center animate-splash'>
+          <h1
+            className='text-white text-4xl md:text-5xl tracking-widest font-light'
+            style={{
+              fontFamily: "'Playfair Display', 'Georgia', serif",
+              letterSpacing: '0.3em',
+            }}
+          >
+            LE LANG FILM
+          </h1>
+
+          <h2
+            className='text-white text-4xl md:text-5xl tracking-widest font-light'
+            style={{
+              fontFamily: "'Playfair Display', 'Georgia', serif",
+              letterSpacing: '0.3em',
+            }}
+          >
+            Cozy Record
+          </h2>
+        </div>
+      </div>
+      <main className='min-h-screen bg-gray-100 flex flex-col lg:flex-row justify-center items-center gap-10 p-6 py-10'>
+        <Toaster position='top-center' reverseOrder={false} />
+        <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-3'>
+          <h1 className='text-2xl font-bold text-gray-900'>문자 생성기 </h1>
+          <p className='text-sm text-gray-500 mb-3'>
+            입력만 하면 바로 복사해서 전송하세요
+          </p>
+          <div className='overflow-y-auto flex-1 px-1'>
+            <div className='flex'>
+              <button
+                onClick={reset}
+                className='ml-auto text-sm text-gray-500 underline'
+              >
+                전체 초기화
+              </button>
+            </div>
+
+            <div className='space-y-2 mb-4'>
+              <label className={labelStyle}>
+                이름 <span className='text-rose-500 '>*</span>
+              </label>
+              <input
+                className={inputStyle}
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder='고객명을 입력해주세요'
+              />
+              <label className={labelStyle}>
+                전화번호 <span className='text-rose-500 '>*</span>
+              </label>
+              <input
+                className={inputStyle}
+                value={phoneNumber}
+                onChange={(e) => handlePhoneChange(e.target.value)}
+                placeholder='전화번호를 입력해주세요'
+              />
+              <div className='flex items-center gap-2'>
+                <label className={labelStyle}>
+                  날짜 <span className='text-rose-500 '>*</span>
+                </label>
+                <button
+                  className='bg-rose-500 text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
+                  onClick={() => setDateToWeekday(6)}
+                >
+                  토요일
+                </button>
+                <button
+                  className='bg-rose-500 text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
+                  onClick={() => setDateToWeekday(0)}
+                >
+                  일요일
+                </button>
+              </div>
+              <input
+                type='date'
+                className={inputStyle}
+                value={
+                  weddingDate ? weddingDate.toISOString().split('T')[0] : ''
+                }
+                onChange={(e) =>
+                  setWeddingDate(new Date(e.target.value) || null)
+                }
+              />
+              <label className={labelStyle}>
+                촬영 시작 시간 <span className='text-rose-500 '>*</span>
+              </label>
+              <input
+                type='time'
+                className={inputStyle}
+                value={shootTime}
+                onChange={(e) =>
+                  handleShootTimeChange(e.target.value as string)
+                }
+              />
+              <div className='flex items-center gap-2'>
+                <label className={labelStyle}>
+                  본식 시간 <span className='text-rose-500 '>*</span>
+                </label>
+                <button
+                  className='bg-rose-500 text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
+                  onClick={() => setTimeAfter(90)}
+                >
+                  +1시간 30분
+                </button>
+              </div>
+              <input
+                type='time'
+                className={inputStyle}
+                value={ceremonyTime}
+                onChange={(e) => setCeremonyTime(e.target.value)}
+              />
+              <div className='flex items-center gap-2'>
+                <label className={labelStyle}>
+                  예식 장소 <span className='text-rose-500 '>*</span>
+                </label>
+                <button
+                  className={`text-xs font-semibold py-2 rounded-xl p-2  transition ${
+                    hasReception
+                      ? 'bg-indigo-500 text-white'
+                      : 'bg-gray-200 text-gray-500'
+                  }`}
+                  onClick={setHasReceptionToggle}
+                >
+                  연회
+                </button>
+                <button
+                  className={`text-xs font-semibold py-2 rounded-xl p-2  transition ${
+                    hasSecondPart
+                      ? 'bg-slate-700 text-white'
+                      : 'bg-slate-200 text-slate-400'
+                  }`}
+                  onClick={setHasSecondPartToggle}
+                >
+                  2부
+                </button>
+              </div>
+              <input
+                className={inputStyle}
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder='장소를 입력해주세요'
+              />
+              <label className={labelStyle}>기상시간</label>
+              <input
+                type='time'
+                className={inputStyle}
+                value={wakeTime}
+                onChange={(e) => setWakeTime(e.target.value)}
+              />
+              <label className={labelStyle}>출발시간</label>
+              <input
+                type='time'
+                className={inputStyle}
+                value={departureTime}
+                onChange={(e) => setDepartureTime(e.target.value)}
+              />
+            </div>
+          </div>
+        </section>
+        <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-4'>
+          <div className='flex gap-2 mb-3'>
             <button
-              onClick={reset}
-              className='ml-auto text-sm text-gray-500 underline'
+              onClick={() => setActiveTab('message')}
+              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${
+                activeTab === 'message'
+                  ? 'bg-rose-500 text-white'
+                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              }`}
             >
-              전체 초기화
+              문자 미리보기
             </button>
+            <button
+              onClick={() => setActiveTab('schedule')}
+              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${
+                activeTab === 'schedule'
+                  ? 'bg-rose-500 text-white'
+                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              }`}
+            >
+              스케줄 요약
+            </button>
+          </div>
+          <div className='bg-gray-100 rounded-xl p-4 text-sm text-gray-700 whitespace-pre-line leading-relaxed flex-1 overflow-y-auto my-2'>
+            {activeTab === 'message' ? message : scheduleSummary}
           </div>
 
-          <div className='space-y-2 mb-4'>
-            <label className={labelStyle}>
-              이름 <span className='text-rose-500 '>*</span>
-            </label>
-            <input
-              className={inputStyle}
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              placeholder='고객명을 입력해주세요'
-            />
-            <label className={labelStyle}>
-              전화번호 <span className='text-rose-500 '>*</span>
-            </label>
-            <input
-              className={inputStyle}
-              value={phoneNumber}
-              onChange={(e) => handlePhoneChange(e.target.value)}
-              placeholder='전화번호를 입력해주세요'
-            />
-            <div className='flex items-center gap-2'>
-              <label className={labelStyle}>
-                날짜 <span className='text-rose-500 '>*</span>
-              </label>
-              <button
-                className='bg-rose-500 text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
-                onClick={() => setDateToWeekday(6)}
-              >
-                토요일
+          {activeTab === 'message' ? (
+            <div className='flex gap-1'>
+              <button onClick={() => copyMessage()} className={buttonStyle}>
+                문자 복사
               </button>
-              <button
-                className='bg-rose-500 text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
-                onClick={() => setDateToWeekday(0)}
-              >
-                일요일
+              <button onClick={() => openSmsApp()} className={buttonStyle}>
+                문자 보내기
               </button>
             </div>
-            <input
-              type='date'
-              className={inputStyle}
-              value={weddingDate ? weddingDate.toISOString().split('T')[0] : ''}
-              onChange={(e) => setWeddingDate(new Date(e.target.value) || null)}
-            />
-            <label className={labelStyle}>
-              촬영 시작 시간 <span className='text-rose-500 '>*</span>
-            </label>
-            <input
-              type='time'
-              className={inputStyle}
-              value={shootTime}
-              onChange={(e) => handleShootTimeChange(e.target.value as string)}
-            />
-            <div className='flex items-center gap-2'>
-              <label className={labelStyle}>
-                본식 시간 <span className='text-rose-500 '>*</span>
-              </label>
-              <button
-                className='bg-rose-500 text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
-                onClick={() => setTimeAfter(90)}
-              >
-                +1시간 30분
+          ) : (
+            <div className='flex gap-2'>
+              <button onClick={() => copyMessage()} className={buttonStyle}>
+                일정 복사
               </button>
-            </div>
-            <input
-              type='time'
-              className={inputStyle}
-              value={ceremonyTime}
-              onChange={(e) => setCeremonyTime(e.target.value)}
-            />
-            <div className='flex items-center gap-2'>
-              <label className={labelStyle}>
-                예식 장소 <span className='text-rose-500 '>*</span>
-              </label>
-              <button
-                className={`text-xs font-semibold py-2 rounded-xl p-2  transition ${
-                  hasReception
-                    ? 'bg-indigo-500 text-white'
-                    : 'bg-gray-200 text-gray-500'
-                }`}
-                onClick={setHasReceptionToggle}
-              >
-                연회
-              </button>
-              <button
-                className={`text-xs font-semibold py-2 rounded-xl p-2  transition ${
-                  hasSecondPart
-                    ? 'bg-slate-700 text-white'
-                    : 'bg-slate-200 text-slate-400'
-                }`}
-                onClick={setHasSecondPartToggle}
-              >
-                2부
-              </button>
-            </div>
-            <input
-              className={inputStyle}
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder='장소를 입력해주세요'
-            />
-            <label className={labelStyle}>기상시간</label>
-            <input
-              type='time'
-              className={inputStyle}
-              value={wakeTime}
-              onChange={(e) => setWakeTime(e.target.value)}
-            />
-            <label className={labelStyle}>출발시간</label>
-            <input
-              type='time'
-              className={inputStyle}
-              value={departureTime}
-              onChange={(e) => setDepartureTime(e.target.value)}
-            />
-          </div>
-        </div>
-      </section>
-      <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-4'>
-        <div className='flex gap-2 mb-3'>
-          <button
-            onClick={() => setActiveTab('message')}
-            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${
-              activeTab === 'message'
-                ? 'bg-rose-500 text-white'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-            }`}
-          >
-            문자 미리보기
-          </button>
-          <button
-            onClick={() => setActiveTab('schedule')}
-            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${
-              activeTab === 'schedule'
-                ? 'bg-rose-500 text-white'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-            }`}
-          >
-            스케줄 요약
-          </button>
-        </div>
-        <div className='bg-gray-100 rounded-xl p-4 text-sm text-gray-700 whitespace-pre-line leading-relaxed flex-1 overflow-y-auto my-2'>
-          {activeTab === 'message' ? message : scheduleSummary}
-        </div>
-
-        {activeTab === 'message' ? (
-          <div className='flex gap-1'>
-            <button onClick={() => copyMessage()} className={buttonStyle}>
-              문자 복사
-            </button>
-            <button onClick={() => openSmsApp()} className={buttonStyle}>
-              문자 보내기
-            </button>
-          </div>
-        ) : (
-          <div className='flex gap-2'>
-            <button onClick={() => copyMessage()} className={buttonStyle}>
-              일정 복사
-            </button>
-            {/* <button onClick={() => addSchedule()} className={buttonStyle}>
+              {/* <button onClick={() => addSchedule()} className={buttonStyle}>
               일정 추가
             </button> */}
-          </div>
-        )}
-      </section>
-    </main>
+            </div>
+          )}
+        </section>
+      </main>
+      )
+    </div>
   );
 }
