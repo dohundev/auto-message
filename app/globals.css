@@ -50,7 +50,24 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
-
  
+/* 스플래쉬 전용 CSS 애니메이션 (JS 상태 없이 부드럽게) */
+.splash-overlay {
+  animation: splash-fade 1.8s ease-out forwards;
+}
 
- 
+@keyframes splash-fade {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden; /* 애니메이션 끝나면 자동으로 안 보이게 */
+  }
+}

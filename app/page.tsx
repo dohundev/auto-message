@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import toast, { Toaster } from 'react-hot-toast';
 import { MESSAGE_TEMPLATE } from './constants/messageTemplate';
@@ -12,8 +12,6 @@ const buttonStyle =
   'w-full bg-black text-white font-semibold py-2 rounded-lg active:scale-[0.98] transition cursor-pointer';
 
 export default function Home() {
-  const [showSplash, setShowSplash] = useState(true);
-  const [fadeOut, setFadeOut] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [weddingDate, setWeddingDate] = useState<Date | null>(new Date());
@@ -250,54 +248,33 @@ export default function Home() {
     });
   };
 
-  useEffect(() => {
-    const fadeTimer = setTimeout(() => {
-      setFadeOut(true);
-    }, 1000);
-
-    const hideTimer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2000);
-
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(hideTimer);
-    };
-  }, []);
-
   return (
     <div className='size-full'>
-      {showSplash && (
-        <div
-          className={`fixed left-0 top-0 w-full h-dvh bg-black flex items-center justify-center z-50 transition-opacity duration-500 ${
-            fadeOut ? 'opacity-0' : 'opacity-100'
-          }`}
-        >
-          <div className='text-center animate-splash'>
-            <h1
-              className='text-white text-4xl md:text-5xl tracking-widest font-light'
-              style={{
-                fontFamily: "'Playfair Display', 'Georgia', serif",
-                letterSpacing: '0.3em',
-              }}
-            >
-              L FILM
-            </h1>
+      <div className='fixed left-0 top-0 w-full h-dvh bg-black flex items-center justify-center z-50 splash-overlay pointer-events-none'>
+        <div className='text-center'>
+          <h1
+            className='text-white text-4xl md:text-5xl tracking-widest font-light'
+            style={{
+              fontFamily: "'Playfair Display', 'Georgia', serif",
+              letterSpacing: '0.3em',
+            }}
+          >
+            L FILM
+          </h1>
 
-            <div className='w-full h-px bg-white/70 mx-auto my-5' />
+          <div className='w-full h-px bg-white/70 mx-auto my-5' />
 
-            <h2
-              className='text-white text-4xl md:text-5xl tracking-widest font-light'
-              style={{
-                fontFamily: "'Playfair Display', 'Georgia', serif",
-                letterSpacing: '0.3em',
-              }}
-            >
-              C RECORD
-            </h2>
-          </div>
+          <h2
+            className='text-white text-4xl md:text-5xl tracking-widest font-light'
+            style={{
+              fontFamily: "'Playfair Display', 'Georgia', serif",
+              letterSpacing: '0.3em',
+            }}
+          >
+            C RECORD
+          </h2>
         </div>
-      )}
+      </div>
       <main className='min-h-screen bg-gray-100 flex flex-col lg:flex-row justify-center items-center gap-10 p-6 py-10'>
         <Toaster position='top-center' reverseOrder={false} />
         <section className='w-full max-w-md lg:h-[600px] bg-white rounded-2xl flex flex-col shadow-lg p-3'>
