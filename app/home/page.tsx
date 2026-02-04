@@ -105,7 +105,7 @@ const scheduleSummary = schedules.length > 0 ? schedules
     if (isFirstOfDay) {
       lines.push(`출발 : ${item.departureTime}`);
     } else {
-      lines.push('출발 : 본식 종료 후 출발');
+      lines.push('출발 : 직전 예식 종료 후 출발');
     }
   }
 
