@@ -59,12 +59,11 @@ export default function Home() {
     .replace('{{hasReception}}', hasReception ? '-연회' : '')
     .replace('{{hasSecondPart}}', hasSecondPart ? '-2부' : '');
 
-  const scheduleSummary = `
-  ${weddingDate ? `${formatDateShort(weddingDate)}` : ''}
-  1. ${shootTime} ${location} ${customerName}
+  const scheduleSummary = `${weddingDate ? `${formatDateShort(weddingDate)}` : ''}
+              1. ${shootTime} ${location} ${customerName} ${hasReception ? '연회' : ''} ${hasSecondPart ? '2부' : ''}
   기상 : ${wakeTime} 
-  출발 : ${departureTime}
-`;
+  출발 : ${departureTime} 
+`.trim();
 
   // 유효성 검사
   const checkValidation = () => {
