@@ -221,8 +221,8 @@ const scheduleSummary = schedules.length > 0 ? schedules
   const handleShootTimeChange = (time: string) => {
     if (!time) return;
     setShootTime(time);
-    setDepartureTime(addMinutesToTime(time, -60));
-    setWakeTime(addMinutesToTime(time, -120));
+    setDepartureTime(addMinutesToTime(time, -90));
+    setWakeTime(addMinutesToTime(time, -150));
     setCeremonyTime(addMinutesToTime(time, 60));
   };
 
@@ -390,6 +390,16 @@ const scheduleSummary = schedules.length > 0 ? schedules
       departureTime: departureTime,
     };
     setSchedules([...schedules, newItem]);
+
+    toast('일정이 추가되었습니다', {
+      icon: '✔︎',
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+        fontWeight: 'bold',
+      },
+    });
     resetForm()
   };
  
