@@ -352,6 +352,8 @@ export default function Home() {
     setHasSecondPart(false);
     setWakeTime('08:00');
     setDepartureTime('09:00');
+    setSelectedSat(false);
+    setSelectedSun(false);
 
     toast('초기화 되었습니다', {
       icon: '✔︎',
