@@ -536,7 +536,7 @@ ${weddingDate ? `${formatDateShort(weddingDate)}` : ''}
                 일정 복사
               </button>
               <button onClick={() => addSchedule()} className={buttonStyle}>
-                일정 추가
+                일정 추가(개발중)
               </button>
             </div>
           )}
