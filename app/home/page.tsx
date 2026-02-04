@@ -628,10 +628,12 @@ const resetForm = () => {
                  <button onClick={() => addSchedule()} className={buttonStyle}>
                 일정 추가
               </button>
-              <button onClick={() => copyMessage()} className={buttonStyle}>
-                일정 복사
-              </button>
-           
+              
+              {schedules.length > 0 && (
+                <button onClick={() => copyMessage()} className={buttonStyle}>
+                  일정 복사
+                </button>
+              )}
             </div>
           )}
         </section>
