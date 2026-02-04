@@ -26,13 +26,6 @@ export default function Home() {
   const [selectedSat, setSelectedSat] = useState(false);
   const [selectedSun, setSelectedSun] = useState(false);
 
-  // 클라이언트에서만 초기 날짜 설정 (hydration 오류 방지)
-  useEffect(() => {
-    if (!weddingDate) {
-      setWeddingDate(new Date());
-    }
-  }, []);
-
   const formatDateWithDay = (data: Date) => {
     const days = ['일', '월', '화', '수', '목', '금', '토'];
     const year = data.getFullYear();
@@ -269,26 +262,6 @@ export default function Home() {
     });
   };
 
-  // const setDateToWeekday = (targetDay: number) => {
-  //   // 오늘 날짜를 정확히 가져옴 (시간 제거)
-  //   const today = new Date();
-  //   today.setHours(0, 0, 0, 0);
-
-  //   const todayDay = today.getDay(); // 0=일, 6=토
-
-  //   // 오늘이 목표 요일과 같거나 이미 지났으면 다음 주로, 아니면 이번 주로
-  //   let diff = targetDay - todayDay;
-  //   if (diff <= 0) {
-  //     diff += 7; // 다음 주로
-  //   }
-
-  //   const targetDate = new Date(today);
-  //   targetDate.setDate(today.getDate() + diff);
-
-  //   setWeddingDate(targetDate);
-  //   setSelectedSat((prev) => !prev);
-  // };
-
   const setSaturday = () => {
     setSelectedSat(true);
 
@@ -341,6 +314,8 @@ export default function Home() {
     });
   };
 
+  const addSchedule = () => {};
+
   const reset = () => {
     setCustomerName('');
     setPhoneNumber('');
@@ -365,6 +340,11 @@ export default function Home() {
       },
     });
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setWeddingDate(new Date());
+  }, []);
 
   return (
     <div className='size-full page-fade-in'>
@@ -556,9 +536,9 @@ export default function Home() {
               <button onClick={() => copyMessage()} className={buttonStyle}>
                 일정 복사
               </button>
-              {/* <button onClick={() => addSchedule()} className={buttonStyle}>
-              일정 추가
-            </button> */}
+              <button onClick={() => addSchedule()} className={buttonStyle}>
+                일정 추가
+              </button>
             </div>
           )}
         </section>
