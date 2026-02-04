@@ -1,5 +1,5 @@
 'use client';
-
+ 
 import { useState, useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import toast, { Toaster } from 'react-hot-toast';
@@ -25,6 +25,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('message');
   const [selectedSat, setSelectedSat] = useState(false);
   const [selectedSun, setSelectedSun] = useState(false);
+  const [schedules, setSchedules] = useState<any[]>([]);
 
   const formatDateWithDay = (data: Date) => {
     const days = ['일', '월', '화', '수', '목', '금', '토'];
@@ -59,11 +60,64 @@ export default function Home() {
     .replace('{{hasReception}}', hasReception ? '-연회' : '')
     .replace('{{hasSecondPart}}', hasSecondPart ? '-2부' : '');
 
-  const scheduleSummary = `
-${weddingDate ? `${formatDateShort(weddingDate)}` : ''}
-1. ${shootTime} ${location} ${customerName}
-기상 : ${wakeTime} 
-출발 : ${departureTime}`.trim();
+//   const scheduleSummary = `
+// ${weddingDate ? `${formatDateShort(weddingDate)}` : ''}
+// 1. ${shootTime} ${location} ${customerName}  
+// 기상 : ${wakeTime} 
+// 출발 : ${departureTime}`.trim();
+
+
+const dayCounters: Record<string, number> = {};
+
+const scheduleSummary = schedules.length > 0 ? schedules
+.map((item) => {
+  if (!item.date) return ''; // 안전장치
+
+  // 1) 요일 키 구하기 (0~6; 일~토)
+  const dayKey = String(item.date.getDay());
+
+  // 2) 해당 요일에서 몇 번째 일정인지 계산
+  const currentCount = dayCounters[dayKey] ?? 0;
+  const indexInDay = currentCount + 1;
+  dayCounters[dayKey] = indexInDay;
+
+  // 3) 이전 요일과 같은지 여부
+  const isFirstOfDay = indexInDay === 1;
+
+  const header = isFirstOfDay ? formatDateShort(item.date) : '';
+  const lines: string[] = [];
+
+  // 👉 같은 요일의 첫 번째 일정에만 날짜 한 번만
+  if (header) {
+    lines.push(header); // 예: 2/7 (토)
+  }
+
+  // 번호는 "요일 안에서" 1,2,3...
+  lines.push(`${indexInDay}. ${item.shootTime} ${item.location} ${item.customerName}`);
+
+  // 👉 같은 요일의 첫 일정에만 기상 표시
+  if (isFirstOfDay && item.wakeTime) {
+    lines.push(`기상 : ${item.wakeTime}`);
+  }
+
+  // 👉 같은 요일의 2번째부터는 "본식 종료 후 출발"
+  if (item.departureTime) {
+    if (isFirstOfDay) {
+      lines.push(`출발 : ${item.departureTime}`);
+    } else {
+      lines.push('출발 : 본식 종료 후 출발');
+    }
+  }
+
+  return lines.join('\n');
+})
+.join('\n\n') : [
+  '아직 추가된 일정이 없습니다.',
+  '',
+  '1. 좌측에서 이름, 날짜, 촬영 시작 시간을 입력해주세요.',
+  '2. 아래의 "일정 추가" 버튼을 눌러 순서대로 일정을 저장하세요.',
+  '3. 저장된 일정은 이 영역에 순서대로 표시됩니다.',
+].join('\n');
 
   // 유효성 검사
   const checkValidation = () => {
@@ -106,9 +160,9 @@ ${weddingDate ? `${formatDateShort(weddingDate)}` : ''}
         },
       });
     } else {
-      if (!checkValidation()) {
-        return;
-      }
+      // if (!checkValidation()) {
+      //   return;
+      // }
       navigator.clipboard.writeText(scheduleSummary);
       toast('일정 복사가 완료되었습니다.', {
         icon: '✔︎',
@@ -313,21 +367,51 @@ ${weddingDate ? `${formatDateShort(weddingDate)}` : ''}
     });
   };
 
-  const addSchedule = () => {};
+  const addSchedule = () => {
+    if(!customerName || !weddingDate || !shootTime || !location) {
+      toast('모든 필수 항목을 입력해주세요', {
+        icon: '❌',
+        style: {
+          borderRadius: '10px',
+          background: '#fff',
+          color: '#333',
+          fontWeight: 'bold',
+        },
+      });
+      return;
+    }
+  
+    const newItem = {
+      date: weddingDate,
+      shootTime: shootTime,
+      location: location,
+      customerName: customerName,
+      wakeTime: wakeTime,
+      departureTime: departureTime,
+    };
+    setSchedules([...schedules, newItem]);
+    resetForm()
+  };
+ 
+const resetForm = () => {
+  setCustomerName('');
+  setPhoneNumber('');
+  setWeddingDate(new Date());
+  setShootTime('10:00');
+  setCeremonyTime('11:00');
+  setLocation('');
+  setHasReception(false);
+  setHasSecondPart(false);
+  setWakeTime('08:00');
+  setDepartureTime('09:00');
+  setSelectedSat(false);
+  setSelectedSun(false);
+}
+
 
   const reset = () => {
-    setCustomerName('');
-    setPhoneNumber('');
-    setWeddingDate(new Date());
-    setShootTime('10:00');
-    setCeremonyTime('11:00');
-    setLocation('');
-    setHasReception(false);
-    setHasSecondPart(false);
-    setWakeTime('08:00');
-    setDepartureTime('09:00');
-    setSelectedSat(false);
-    setSelectedSun(false);
+    resetForm()
+    setSchedules([]);
 
     toast('초기화 되었습니다', {
       icon: '✔︎',
@@ -341,7 +425,6 @@ ${weddingDate ? `${formatDateShort(weddingDate)}` : ''}
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setWeddingDate(new Date());
   }, []);
 
@@ -532,12 +615,13 @@ ${weddingDate ? `${formatDateShort(weddingDate)}` : ''}
             </div>
           ) : (
             <div className='flex gap-2'>
+                 <button onClick={() => addSchedule()} className={buttonStyle}>
+                일정 추가
+              </button>
               <button onClick={() => copyMessage()} className={buttonStyle}>
                 일정 복사
               </button>
-              <button onClick={() => addSchedule()} className={buttonStyle}>
-                일정 추가(개발중)
-              </button>
+           
             </div>
           )}
         </section>
