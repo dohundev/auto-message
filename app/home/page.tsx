@@ -23,6 +23,8 @@ export default function Home() {
   const [hasReception, setHasReception] = useState(false);
   const [hasSecondPart, setHasSecondPart] = useState(false);
   const [activeTab, setActiveTab] = useState('message');
+  const [selectedSat, setSelectedSat] = useState(false);
+  const [selectedSun, setSelectedSun] = useState(false);
 
   // 클라이언트에서만 초기 날짜 설정 (hydration 오류 방지)
   useEffect(() => {
@@ -56,9 +58,7 @@ export default function Home() {
 
   const message = MESSAGE_TEMPLATE.replace(
     '{{weddingDateTime}}',
-    weddingDate
-      ? `${formatDateWithDay(weddingDate)} ${ceremonyTime || ''}`
-      : '',
+    weddingDate ? `${formatDateWithDay(weddingDate)} ${ceremonyTime || ''}` : ''
   )
     .replace('{{shootTime}}', shootTime || '')
     .replace('{{location}}', location || '')
@@ -166,7 +166,10 @@ export default function Home() {
 
     const newHours = Math.floor(totalMinutes / 60) % 24;
     const newMinutes = totalMinutes % 60;
-    return `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
+    return `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(
+      2,
+      '0'
+    )}`;
   };
 
   const handleShootTimeChange = (time: string) => {
@@ -187,10 +190,29 @@ export default function Home() {
     } else if (numbers.length <= 7) {
       formatted = `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
     } else {
-      formatted = `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+      formatted = `${numbers.slice(0, 3)}-${numbers.slice(
+        3,
+        7
+      )}-${numbers.slice(7, 11)}`;
     }
 
     setPhoneNumber(formatted);
+  };
+
+  const handleWeddingDateChange = (date: string) => {
+    const selectedDate = new Date(date);
+    setWeddingDate(selectedDate);
+
+    if (selectedDate.getDay() === 6) {
+      setSelectedSat(true);
+      setSelectedSun(false);
+    } else if (selectedDate.getDay() === 0) {
+      setSelectedSun(true);
+      setSelectedSat(false);
+    } else {
+      setSelectedSat(false);
+      setSelectedSun(false);
+    }
   };
 
   const setTimeAfter = (time: number) => {
@@ -224,28 +246,99 @@ export default function Home() {
 
   const setHasReceptionToggle = () => {
     setHasReception(!hasReception);
+    toast(`연회가 ${hasReception ? '해제' : '추가'} 되었습니다`, {
+      icon: '✔︎',
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+        fontWeight: 'bold',
+      },
+    });
   };
   const setHasSecondPartToggle = () => {
     setHasSecondPart(!hasSecondPart);
+    toast(`2부가 ${hasReception ? '해제' : '추가'} 되었습니다`, {
+      icon: '✔︎',
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+        fontWeight: 'bold',
+      },
+    });
   };
 
-  const setDateToWeekday = (targetDay: number) => {
-    // 오늘 날짜를 정확히 가져옴 (시간 제거)
+  // const setDateToWeekday = (targetDay: number) => {
+  //   // 오늘 날짜를 정확히 가져옴 (시간 제거)
+  //   const today = new Date();
+  //   today.setHours(0, 0, 0, 0);
+
+  //   const todayDay = today.getDay(); // 0=일, 6=토
+
+  //   // 오늘이 목표 요일과 같거나 이미 지났으면 다음 주로, 아니면 이번 주로
+  //   let diff = targetDay - todayDay;
+  //   if (diff <= 0) {
+  //     diff += 7; // 다음 주로
+  //   }
+
+  //   const targetDate = new Date(today);
+  //   targetDate.setDate(today.getDate() + diff);
+
+  //   setWeddingDate(targetDate);
+  //   setSelectedSat((prev) => !prev);
+  // };
+
+  const setSaturday = () => {
+    setSelectedSat(true);
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
     const todayDay = today.getDay(); // 0=일, 6=토
-
     // 오늘이 목표 요일과 같거나 이미 지났으면 다음 주로, 아니면 이번 주로
-    let diff = targetDay - todayDay;
+    let diff = 6 - todayDay;
     if (diff <= 0) {
       diff += 7; // 다음 주로
     }
-    
     const targetDate = new Date(today);
     targetDate.setDate(today.getDate() + diff);
-
     setWeddingDate(targetDate);
+    setSelectedSun(false);
+
+    toast(`토요일이 선택되었습니다`, {
+      icon: '✔︎',
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+        fontWeight: 'bold',
+      },
+    });
+  };
+
+  const setSunday = () => {
+    setSelectedSun(true);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayDay = today.getDay(); // 0=일, 6=토
+    // 오늘이 목표 요일과 같거나 이미 지났으면 다음 주로, 아니면 이번 주로
+    let diff = 0 - todayDay;
+    if (diff <= 0) {
+      diff += 7; // 다음 주로
+    }
+    const targetDate = new Date(today);
+    targetDate.setDate(today.getDate() + diff);
+    setWeddingDate(targetDate);
+    setSelectedSat(false);
+    toast(`일요일이 선택되었습니다`, {
+      icon: '✔︎',
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+        fontWeight: 'bold',
+      },
+    });
   };
 
   const reset = () => {
@@ -314,14 +407,26 @@ export default function Home() {
                   날짜 <span className='text-rose-500 '>*</span>
                 </label>
                 <button
-                  className='bg-rose-500 text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
-                  onClick={() => setDateToWeekday(6)}
+                  className={`text-xs font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer
+                     ${
+                       selectedSat
+                         ? 'bg-rose-500 text-white'
+                         : 'bg-gray-200 text-black'
+                     }
+                  `}
+                  onClick={() => setSaturday()}
                 >
                   토요일
                 </button>
                 <button
-                  className='bg-rose-500 text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
-                  onClick={() => setDateToWeekday(0)}
+                  className={`text-xs font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer
+                     ${
+                       selectedSun
+                         ? 'bg-rose-500 text-white'
+                         : 'bg-gray-200 text-black'
+                     }
+                  `}
+                  onClick={() => setSunday()}
                 >
                   일요일
                 </button>
@@ -329,12 +434,8 @@ export default function Home() {
               <input
                 type='date'
                 className={inputStyle}
-                value={
-                  weddingDate ? formatDateForInput(weddingDate) : ''
-                }
-                onChange={(e) =>
-                  setWeddingDate(e.target.value ? new Date(e.target.value) : null)
-                }
+                value={weddingDate ? formatDateForInput(weddingDate) : ''}
+                onChange={(e) => handleWeddingDateChange(e.target.value)}
               />
               <label className={labelStyle}>
                 촬영 시작 시간 <span className='text-rose-500 '>*</span>
@@ -352,7 +453,7 @@ export default function Home() {
                   본식 시간 <span className='text-rose-500 '>*</span>
                 </label>
                 <button
-                  className='bg-rose-500 text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
+                  className='bg-black text-xs text-white font-medium py-1 px-2 rounded-lg active:scale-[0.98] transition cursor-pointer'
                   onClick={() => setTimeAfter(90)}
                 >
                   +1시간 30분
@@ -369,20 +470,20 @@ export default function Home() {
                   예식 장소 <span className='text-rose-500 '>*</span>
                 </label>
                 <button
-                  className={`text-xs font-semibold py-2 rounded-xl p-2  transition ${
+                  className={`text-xs font-medium py-1 px-2 rounded-lg  active:scale-[0.98] transition cursor-pointer ${
                     hasReception
-                      ? 'bg-indigo-500 text-white'
-                      : 'bg-gray-200 text-gray-500'
+                      ? 'bg-rose-500 text-white'
+                      : 'bg-gray-200 text-black'
                   }`}
                   onClick={setHasReceptionToggle}
                 >
                   연회
                 </button>
                 <button
-                  className={`text-xs font-semibold py-2 rounded-xl p-2  transition ${
+                  className={`text-xs font-medium py-1 px-2 rounded-lg  active:scale-[0.98] transition cursor-pointer ${
                     hasSecondPart
-                      ? 'bg-slate-700 text-white'
-                      : 'bg-slate-200 text-slate-400'
+                      ? 'bg-rose-500 text-white'
+                      : 'bg-gray-200 text-black'
                   }`}
                   onClick={setHasSecondPartToggle}
                 >
