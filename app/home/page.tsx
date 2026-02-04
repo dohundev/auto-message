@@ -61,7 +61,7 @@ export default function Home() {
 
   const scheduleSummary = `
 ${weddingDate ? `${formatDateShort(weddingDate)}` : ''}
-1. ${shootTime} ${location} ${customerName} ${hasReception ? '연회' : ''} ${hasSecondPart ? '2부' : ''}
+1. ${shootTime} ${location} ${customerName}
 기상 : ${wakeTime} 
 출발 : ${departureTime}`.trim();
 
